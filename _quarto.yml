@@ -1,0 +1,26 @@
+project:
+  type: website
+  output-dir: _site
+
+  # Diese Dateien/Ordner beim Rendern mitkopieren
+  resources:
+    - lesungen.csv
+    - sebastian.jpg
+    - icons/*
+
+website:
+  title: "Autorenvita Sebastian Sukstorf"
+  navbar: false           # keine Navigationsleiste
+  search: false           # keine Seitensuche
+  repo-actions: none      # << fix: statt false -> none (oder weglassen)
+  page-navigation: false  # Seitennavigation deaktivieren
+
+format:
+  html:
+    embed-resources: true     # CSS/JS inline – praktisch fürs FTP-Hosting
+    theme: default
+    toc: false
+    lang: de
+    smooth-scroll: true
+    link-external-newwindow: true
+    html-math-method: mathjax
