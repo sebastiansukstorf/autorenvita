@@ -1,2 +1,20 @@
-/.quarto/
+# Quarto interne Cache-Dateien
+.quarto/
+.quarto-cache/
+
+# Output-Ordner (wird automatisch generiert)
+_site/
+
+# Jupyter / Quarto Notebooks (wenn du keine Notebooks nutzt)
+**/*.ipynb
 **/*.quarto_ipynb
+
+# macOS / VS Code / Systemdateien
+.DS_Store
+.vscode/
+Thumbs.db
+
+# Python / R temporäre Artefakte (nur falls später genutzt)
+__pycache__/
+.Rhistory
+.RData

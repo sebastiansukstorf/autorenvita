@@ -1,20 +1,19 @@
 project:
   type: website
   output-dir: _site
-  resources:
-    - lesungen.csv
-    - sebastian.jpg
-    - icons/*
 
 website:
-  #title: "Autorenvita Sebastian Sukstorf"
-  navbar: false
-  search: false
-  page-navigation: false
+  title: "Autorenvita Sebastian Sukstorf"
+  navbar:
+    # Social-Icons rechts (optional)
+    right:
+      - icon: instagram
+        href: https://www.instagram.com/sukstorfsebastian/
+      - icon: youtube
+        href: https://www.youtube.com/@SSukstorf
+    background: "#24376F"     # <— hier deinen Farbwert einsetzen, z. B. "#6E8C7A"
+    foreground: "#ffffff"        # weiße Schrift auf der Navbar (Kontrast)
 
 format:
   html:
     embed-resources: true
-    toc: false
-    lang: de
-    link-external-newwindow: true

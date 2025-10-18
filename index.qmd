@@ -1,6 +1,11 @@
 ---
 title: "Autorenvita Sebastian Sukstorf"
 lang: de
+about:
+  template: jolla
+  image: sebastian.jpg
+  image-alt: "Sebastian Sukstorf"
+  image-shape: round
 format:
   html:
     toc: false
@@ -9,125 +14,39 @@ format:
       text: |
         <meta name="robots" content="noindex,nofollow">
         <style>
-          main.content{max-width:820px;margin:0 auto;padding:2rem 1rem;text-align:center}
-          img.portrait{display:block;margin:0 auto 1rem;max-width:220px;border-radius:9999px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
-          p.bio{text-align:justify;margin:0 auto 2rem;max-width:72ch}
-          .social a{display:inline-block;margin:.25rem .35rem;padding:.35rem .7rem;border:1px solid #c8ccd0;border-radius:.5rem;text-decoration:none;color:#333}
-          .muted{color:#666;font-size:.9em}
-          table{border-collapse:collapse;width:100%;text-align:left;margin-top:1rem}
-          th,td{padding:.5rem;border-bottom:1px solid #e3e5e7;vertical-align:top}
-          th{cursor:pointer;user-select:none;white-space:nowrap}
+          /* --- global linksbündig --- */
+          body, main.content, h1, h2, h3, p, ul, li { text-align: left; }
+
+          /* About-Jolla zentriert standardmäßig: überschreiben */
+          .about-jolla .about-contents,
+          .about-jolla .about-entity,
+          .about-jolla .about-links,
+          .about-jolla .about-title,
+          .about-jolla .about-contents p { text-align: left !important; margin-left: 0; }
+
+          /* angenehme Breite */
+          main.content { max-width: 820px; margin: 0 auto; padding: 0 1rem; }
+
+          /* schlichte Liste */
+          ul.readings { list-style: disc; padding-left: 1.2rem; margin: 1.2rem 0; }
+          ul.readings li { margin-bottom: .8rem; }
+
+          /* Notbremse, falls das Theme die Navbar-Farbe nicht setzt */
+          .navbar, .navbar-dark, .navbar-light {
+            background-color: #HEX_AUGEN !important;   /* <— gleichen Wert wie in _quarto.yml */
+          }
+          .navbar a, .navbar .navbar-brand { color: #fff !important; }
         </style>
 ---
 
-<img src="./sebastian.jpg" alt="Sebastian Sukstorf" class="portrait">
-
-# Autorenvita Sebastian Sukstorf
-
-<p class="bio">
-Sebastian Sukstorf ist Autor und Erzähler. In seinen Texten verbindet er Alltagsbeobachtungen mit präziser Sprache und subtiler Ironie.
-Er lebt in Hamburg, schreibt Kurzgeschichten, Prosa und arbeitet an neuen literarischen Projekten.
+Sebastian Sukstorf ist Autor und Erzähler. In seinen Texten verbindet er Alltagsbeobachtungen mit präziser Sprache und subtiler Ironie.  
+Er lebt in Hamburg, schreibt Kurzgeschichten, Prosa und arbeitet an neuen literarischen Projekten.  
 Neben Lesungen in Bibliotheken und Literaturhäusern engagiert er sich für die Vermittlung von Sprache und Literatur im öffentlichen Raum.
-</p>
-
-<div class="social">
-  <a href="https://www.instagram.com/sukstorfsebastian/" target="_blank" rel="noopener">Instagram</a>
-  <a href="https://www.youtube.com/@SSukstorf" target="_blank" rel="noopener">YouTube</a>
-</div>
 
 ---
 
 ## Lesungen
 
-<p class="muted">Textstand: <span id="stand"></span></p>
-
-<table id="lesungen">
-  <thead>
-    <tr>
-      <th data-type="date">Datum</th>
-      <th>Stadt</th>
-      <th>Ort</th>
-      <th>Titel</th>
-      <th>Hinweis</th>
-      <th>Link</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-
-<script>
-// Textstand (dd.mm.yyyy)
-(function(){
-  const d=new Date(), dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'), yyyy=d.getFullYear();
-  const el=document.getElementById('stand'); if(el) el.textContent=`${dd}.${mm}.${yyyy}`;
-})();
-
-// CSV laden (kompatibel mit , und ;  + BOM + "...")
-(async function(){
-  try {
-    const res = await fetch('./lesungen.csv', {cache:'no-store'});
-    if(!res.ok) throw new Error('CSV HTTP '+res.status);
-    let text = await res.text();
-    text = text.replace(/^\uFEFF/, ''); // BOM entfernen
-
-    // Delimiter auto: ; bevorzugen, wenn häufiger als ,
-    const firstLine = text.split(/\r?\n/)[0] || '';
-    const delim = (firstLine.split(';').length > firstLine.split(',').length) ? ';' : ',';
-
-    const rows = [];
-    const re = new RegExp(`\\s*(?:\"([^\"]*)\"|([^${delim}\\r\\n]*))\\s*(?:${delim}|\\r?\\n|$)`, 'g');
-    let m, line=[];
-    for (let s=text; (m=re.exec(s)); ) {
-      line.push((m[1] ?? m[2] ?? '').trim());
-      const end = m[0].endsWith('\n') || re.lastIndex===s.length;
-      if(end){ rows.push(line); line=[]; }
-    }
-
-    if(rows.length<=1){ console.warn('CSV leer oder nur Header.'); return; }
-
-    const [header, ...data] = rows;
-    const tbody = document.querySelector('#lesungen tbody');
-
-    const parseISO = s => { const [y,m,d]=s.trim().split('-').map(Number); return new Date(y,(m||1)-1,d||1); };
-    const toDE = d => `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
-
-    data.sort((a,b)=>parseISO(b[0])-parseISO(a[0])); // neueste oben
-
-    for(const r of data){
-      if(!r[0]) continue;
-      const dt = parseISO(r[0]);
-      const tr = document.createElement('tr');
-      const cells = [
-        `<time datetime="${r[0]}" data-sort="${r[0]}">${isNaN(dt)? r[0] : toDE(dt)}</time>`,
-        r[1]||'', r[2]||'', r[3]||'',
-        r[4]? `<span class="muted">${r[4]}</span>` : '',
-        r[5]? `<a href="${r[5]}" target="_blank" rel="noopener">Details</a>` : ''
-      ];
-      cells.forEach(c=>{ const td=document.createElement('td'); td.innerHTML=c; tr.appendChild(td); });
-      tbody.appendChild(tr);
-    }
-
-    // Klicksortierung
-    const table = document.getElementById('lesungen');
-    [...table.tHead.rows[0].cells].forEach((th, idx) => {
-      let asc = idx===0 ? false : true;
-      th.addEventListener('click', () => {
-        asc=!asc;
-        const rowsArr=[...tbody.rows];
-        rowsArr.sort((r1,r2)=>{
-          const key=row=> idx===0
-            ? (row.cells[0].querySelector('time')?.getAttribute('data-sort')||'')
-            : row.cells[idx].textContent.trim();
-          const a=key(r1), b=key(r2);
-          if(idx===0) return (a.localeCompare(b))*(asc?1:-1);
-          return a.localeCompare(b,'de',{numeric:true,sensitivity:'base'})*(asc?1:-1);
-        });
-        rowsArr.forEach(r=>tbody.appendChild(r));
-      });
-    });
-
-  } catch(e) {
-    console.error('CSV-Fehler:', e);
-  }
-})();
-</script>
+* **16.10.2025 – Hamburg, Motte:** DIE ANTHOLOGIE „MEIN DORF – MEINE STADT – MEIN VIERTEL – Hier ist mein Herz zu Hause“ (Hg. Textfabrique51) wird auch in Hamburg vorgestellt!
+* **08.12.2025 – Bremen, Stadtbibliothek:** „Wintertexte“
+* **23.01.2026 – Berlin, Literaturhaus:** „Neue Texte“
